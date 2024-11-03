@@ -258,27 +258,32 @@
 
         const fetchBlogs = async () => {
             const response = await fetch('https://gql.hashnode.com', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    query: `query {
-                        publication(host: "prevent.hashnode.dev") {
-                            posts(first: 1) {
-                                edges {
-                                    node {
-                                        title
-                                        brief
-                                        slug
-                                        coverImage
-                                    }
-                                }
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                query: `
+                  query {
+                    publication(host: "prevent.hashnode.dev") {
+                      posts(first: 10) {
+                        edges {
+                          node {
+                            title
+                            brief
+                            slug
+                            coverImage {
+                              url
                             }
+                          }
                         }
-                    }`
-                })
+                      }
+                    }
+                  }
+                `
+              }),
             });
+
             
             const data = await response.json();
             blogPosts = data.data.publication.posts.edges; // Store all blog posts in an array
@@ -295,9 +300,8 @@
                 blogItem.innerHTML = `
                     <img src="${coverImage}" alt="${item.node.title}">
                     <h3>${item.node.title}</h3>
-                   
                     <p>${item.description}</p>
-                    <a href="${item.node.slug}" target="_blank">Read more</a>
+                    <a href="https://prevent.hashnode.dev/${item.node.slug}" target="_blank">Read more</a>
                 `;
                 blogList.appendChild(blogItem);
             });
