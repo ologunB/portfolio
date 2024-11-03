@@ -228,8 +228,8 @@
             jsonData.projects.forEach(project => {
                 const projectItem = document.createElement('div');
                 projectItem.classList.add('project-item');
+                // <img src="${project.image}" alt="${project.title}">
                 projectItem.innerHTML = `
-                    // <img src="${project.image}" alt="${project.title}">
                     <h3>${project.title}</h3>
                     <p>${project.description}</p>
                     <a href="${project.link}" target="_blank">View on GitHub</a>
