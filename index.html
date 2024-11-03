@@ -300,7 +300,7 @@
                 blogItem.innerHTML = `
                     <img src="${coverImage}" alt="${item.node.title}">
                     <h3>${item.node.title}</h3>
-                    <p>${item.description}</p>
+                    <p>${item.node.brief}</p>
                     <a href="https://prevent.hashnode.dev/${item.node.slug}" target="_blank">Read more</a>
                 `;
                 blogList.appendChild(blogItem);
