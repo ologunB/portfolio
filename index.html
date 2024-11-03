@@ -255,13 +255,35 @@
 
         // Fetch and display blog posts from RSS feed
         let blogPosts = [];
-        const fetchBlogs = async () => {
-            const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://prevent.hashnode.dev/rss.xml');
-            const data = await response.json();
-            blogPosts = data.items; // Store all blog posts in an array
-            displayBlogs(4); // Initially display 6 blog posts
-        };
 
+        const fetchBlogs = async () => {
+            const response = await fetch('https://gql.hashnode.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: `query {
+                        publication(host: "prevent.hashnode.dev") {
+                            posts(first: 1) {
+                                edges {
+                                    node {
+                                        title
+                                        brief
+                                        slug
+                                        coverImage
+                                    }
+                                }
+                            }
+                        }
+                    }`
+                })
+            });
+            
+            const data = await response.json();
+            blogPosts = data.data.publication.posts.edges; // Store all blog posts in an array
+            displayBlogs(4); // Call the function to display blog posts (adjust as needed)
+        };
         const displayBlogs = (count) => {
             const blogList = document.getElementById('blog-list');
             blogList.innerHTML = ''; // Clear existing content
@@ -269,13 +291,13 @@
             blogPosts.slice(0, count).forEach(item => {
                 const blogItem = document.createElement('div');
                 blogItem.classList.add('blog-item');
-                const coverImage = item["hashnode:coverImage"] || "https://via.placeholder.com/300x200"; // Fallback if no image
+                const coverImage = item.node.coverImage.url || "https://via.placeholder.com/300x200"; // Fallback if no image
                 blogItem.innerHTML = `
-                    <img src="${coverImage}" alt="${item.title}">
-                    <h3>${item.title}</h3>
+                    <img src="${coverImage}" alt="${item.node.title}">
+                    <h3>${item.node.title}</h3>
                    
                     <p>${item.description}</p>
-                    <a href="${item.link}" target="_blank">Read more</a>
+                    <a href="${item.node.slug}" target="_blank">Read more</a>
                 `;
                 blogList.appendChild(blogItem);
             });
@@ -284,7 +306,7 @@
         let showingMore = false;
         const toggleBlogs = () => {
             if (showingMore) {
-                displayBlogs(6); // Show only 6 posts
+                displayBlogs(4); // Show only 4 posts
                 document.getElementById('view-more').innerHTML = '<button onclick="toggleBlogs()">View More</button>';
             } else {
                 displayBlogs(blogPosts.length); // Show all posts
