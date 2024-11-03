@@ -290,12 +290,12 @@
                 `
               }),
             });
-
             
             const data = await response.json();
             blogPosts = data.data.publication.posts.edges; // Store all blog posts in an array
             displayBlogs(4); // Call the function to display blog posts (adjust as needed)
         };
+        
         const displayBlogs = (count) => {
             const blogList = document.getElementById('blog-list');
             blogList.innerHTML = ''; // Clear existing content
@@ -326,7 +326,6 @@
             showingMore = !showingMore;
         };
 
-        // Call the functions to display initial data
         displayProjects();
         displayResearch(); // Call this function to display research items
         fetchBlogs(); // Call this function to load the blog posts
